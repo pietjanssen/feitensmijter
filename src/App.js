@@ -22,7 +22,9 @@ class App extends Component {
         return (
             <main role="main">
                 <div className="container">
-                    <Fact fact={this.state.fact}/>
+                    <div className="col-12 fact-container">
+                        <Fact fact={this.state.fact}/>
+                    </div>
                 </div>
                 <Footer/>
             </main>
