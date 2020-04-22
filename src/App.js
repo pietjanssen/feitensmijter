@@ -1,29 +1,39 @@
 import React, {Component} from 'react';
 import './App.css';
-import Fact from './components/Fact/Fact';
 import Footer from "./components/Footer/Footer";
-import axios from 'axios';
+
+const apiUrl = query =>
+    `https://en.wikipedia.org/w/api.php?action=query&prop=revisions&titles=${query}&rvslots=*&rvprop=content&format=json`
+
 
 class App extends Component {
 
-    state = {
-        fact: {
-            id: 1,
-            text: "Boris is de beste."
-        }
-    };
-
-    // componentDidMount() {
-    //     axios.get('https://jsonplaceholder.typicode.com/todos')
-    //         .then(res => this.setState({fact: res.data}))
-    // }
+    componentDidMount() {
+        const searchTerm = "Boris"
+        fetch(apiUrl(searchTerm), {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Access-Control-Allow-Origin': 'http://localhost:3000/',
+                'Access-Control-Allow-Methods': 'GET'
+            }
+        })
+            .then(res => {
+                    const data = res.data;
+                    console.table(data);
+                    this.setState({data: data});
+                },
+                (error) => {
+                    this.setState({data: error});
+                })
+    }
 
     render() {
         return (
             <main role="main">
                 <div className="container">
                     <div className="col-12 fact-container">
-                        <Fact fact={this.state.fact}/>
+                        {/*<Fact fact={this.state.fact}/>*/}
                     </div>
                 </div>
                 <Footer/>
