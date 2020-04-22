@@ -8,24 +8,15 @@ const apiUrl = query =>
 
 class App extends Component {
 
-    componentDidMount() {
+    async componentDidMount(): Promise<void> {
         const searchTerm = "Boris"
-        fetch(apiUrl(searchTerm), {
+        const response = await fetch(apiUrl(searchTerm), {
             method: 'GET',
-            headers: {
-                'Content-type': 'application/json',
-                'Access-Control-Allow-Origin': 'http://localhost:3000/',
-                'Access-Control-Allow-Methods': 'GET'
-            }
-        })
-            .then(res => {
-                    const data = res.data;
-                    console.table(data);
-                    this.setState({data: data});
-                },
-                (error) => {
-                    this.setState({data: error});
-                })
+            mode: "no-cors",
+        });
+        console.log(response)
+        const json: any = JSON.parse(await response.json())
+        console.log(json);
     }
 
     render() {
