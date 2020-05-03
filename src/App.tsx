@@ -29,15 +29,15 @@ class App extends Component <any, IState> {
         }
     }
 
-    handleInput(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({searchValue: event.target.value});
-    }
-
-    handleSearch(text: string){
-        if(text){
-            this.searchFact("www.google.nl")
-        }
-    }
+    // handleInput(event: React.ChangeEvent<HTMLInputElement>) {
+    //     this.setState({searchValue: event.target.value});
+    // }
+    //
+    // handleSearch(text: string){
+    //     if(text){
+    //         this.searchFact("www.google.nl")
+    //     }
+    // }
 
     stopSearching(){
         // document.getElementById('factInput').placeholder = "Smijt er nog eentje!"
@@ -54,7 +54,7 @@ class App extends Component <any, IState> {
                 const splitFact: string[] = json.extract.split(". ")
                 const sentence1: string = splitFact[0];
                 const sentence2: string = splitFact[1];
-                let finalSentence: string = ""
+                let finalSentence: string
                 if(sentence2) {
                     finalSentence = sentence1 + ". " + sentence2
                     if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
