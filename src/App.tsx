@@ -18,7 +18,6 @@ interface IState {
     fact?: FactItem
     searchValue: string
     searching: boolean
-    loading: boolean
 }
 
 
@@ -28,7 +27,6 @@ class App extends Component <any, IState> {
         this.state = {
             searchValue: "",
             searching: false,
-            loading: false
         }
     }
 
@@ -45,8 +43,7 @@ class App extends Component <any, IState> {
             const search: string = apiUrl(text)
 
             if (!this.state.searching) {
-                this.setState({...this.state, searching: true, loading: true})
-                setTimeout(() => this.setState({...this.state, loading: false}), 3000)
+                this.setState({...this.state, searching: true})
                 fetch(search, {
                     method: 'GET'
                 }).then(async (response: Response) => {
