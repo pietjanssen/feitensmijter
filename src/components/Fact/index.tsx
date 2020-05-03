@@ -6,14 +6,41 @@ interface IProps {
     fact?: FactItem
 }
 
-class Fact extends Component <IProps, any> {
+interface IState {
+    timeout: any
+}
+
+class Fact extends Component <IProps, IState> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            timeout: null
+        }
+    }
+
+
+    typeWriter(text: string, i: number=0): void {
+        const speed: number = Math.floor(Math.random() * 100);
+        const fact: HTMLElement | null = document.getElementById('fact');
+
+        if (fact && i < text.length) {
+            fact.innerHTML += text.charAt(i);
+            i++;
+            this.setState({...this.state, timeout: setTimeout(() => this.typeWriter(text, i), speed)});
+        }
+    }
 
     componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<any>, snapshot?: any) {
         if(this.props.fact && this.props.fact !== prevProps.fact) {
             const fact: HTMLElement | null = document.getElementById('fact');
-            if(fact)
-                fact.innerHTML = ''
-            typeWriter(this.props.fact.text)
+            if(fact) {
+                fact.innerHTML = '';
+                const timeout = this.state.timeout;
+                if(timeout) {
+                    clearTimeout(timeout)
+                }
+            }
+            this.typeWriter(this.props.fact.text)
         }
     }
 
@@ -21,17 +48,6 @@ class Fact extends Component <IProps, any> {
         return (
             <div id='fact' className="fact"/>
         );
-    }
-}
-
-function typeWriter(text: string, i: number=0): void {
-    const speed: number = Math.floor(Math.random() * 100);
-    const fact: HTMLElement | null = document.getElementById('fact');
-
-    if (fact && i < text.length) {
-        fact.innerHTML += text.charAt(i);
-        i++;
-        setTimeout(() => typeWriter(text, i), speed);
     }
 }
 
