@@ -11,7 +11,7 @@ interface IState {
     timeout: any
 }
 
-class FactFactory extends Component <IProps, IState> {
+class Fact extends Component <IProps, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -54,4 +54,4 @@ class FactFactory extends Component <IProps, IState> {
     }
 }
 
-export default FactFactory;
+export default Fact;

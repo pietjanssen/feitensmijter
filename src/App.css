@@ -14,7 +14,6 @@
 #factContainer {
     width: 100%;
     position: relative;
-    padding: 2rem;
     background: #eee;
     /*-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
     /*-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
@@ -26,6 +25,39 @@
     justify-content: space-between;
     height: 50%;
     flex-direction: column;
+    align-items: center;
+}
+
+#factButton {
+    font-size: 24px;
+    display: inline-block;
+    padding: 15px 25px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #1d5f18;
+    transition: opacity 1s;
+}
+
+#factButton:hover {
+    background-color: #3e8e41
+}
+
+
+#factButton:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #1d5f18;
+    transform: translateY(4px);
+}
+
+#factButton.hide {
+    opacity: 0;
+    pointer-events: none;
 }
 
 @keyframes inputInsert {
@@ -37,13 +69,13 @@
     to {
         opacity: 0;
         font-size: 0;
-        margin-top: 50px;
+        padding-top: 50px;
     }
 }
 
-#factInput[type='text'] {
+#factInput {
     text-align: center;
-    font-size: 48px;
+    font-size: 24px;
     background-color: transparent;
     border: 0;
     -webkit-box-shadow: none;
@@ -53,13 +85,13 @@
     opacity: 1;
 }
 
-#factInput[type='text'].hide {
-    animation: inputInsert 0.5s;
+#factInput.hide {
+    animation: inputInsert 1s;
     opacity: 0;
     pointer-events: none;
 }
 
-#factInput[type='text']:focus {
+#factInput:focus {
     outline: none;
 }
 
@@ -78,13 +110,25 @@
 /* No media query for `xs` since this is the default in Bootstrap*/
 
 /*Small devices (landscape phones, 576px and up)*/
-@media (min-width: 576px) {  }
+@media (min-width: 576px) {
+    #factContainer {
+        padding: 6rem 10rem 6rem 10rem;
+    }
+}
 
 /*Medium devices (tablets, 768px and up)*/
-@media (min-width: 768px) {  }
+@media (min-width: 768px) {
+    #factContainer {
+        padding: 6rem 10rem 6rem 10rem;
+    }
+}
 
 /*Large devices (desktops, 992px and up)*/
-@media (min-width: 992px) {  }
+@media (min-width: 992px) {
+    #factContainer {
+        padding: 12rem 20rem 12rem 20rem;
+    }
+}
 
 /*Extra large devices (large desktops, 1200px and up)*/
 @media (min-width: 1200px) {  }

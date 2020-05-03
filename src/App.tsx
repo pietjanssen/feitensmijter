@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import './App.css';
 import Footer from "../src/components/Footer";
 import FactItem from "../src/models/FactItem";
-import FactFactory from "../src/components/Fact";
+import Fact from "../src/components/Fact";
 
-const apiUrl = (query: string) =>
-    `https://en.wikipedia.org/w/api.php?action=query&prop=revisions&titles=${query}&rvslots=*&rvprop=content&format=json`
+const apiUrl = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
 
 const errorFacts: string[] = [
     "Ik heb geen idee wat dit zou moeten betekenen.",
@@ -34,30 +33,49 @@ class App extends Component <any, IState> {
         this.setState({searchValue: event.target.value});
     }
 
+    handleSearch(text: string){
+        if(text){
+            this.searchFact("www.google.nl")
+        }
+    }
+
     stopSearching(){
+        // document.getElementById('factInput').placeholder = "Smijt er nog eentje!"
         this.setState({...this.state, searching: false, searchValue: ""})
     }
 
-    searchFact(text: string){
-        if(text) {
-            const search: string = apiUrl(text)
+    searchFact(url: string = apiUrl){
+        if (!this.state.searching) {
+            this.setState({...this.state, searching: true})
+            fetch(url, {
+                method: 'GET'
+            }).then(async (response: Response) => {
+                const json: any = await response.json()
+                const splitFact: string[] = json.extract.split(". ")
+                const sentence1: string = splitFact[0];
+                const sentence2: string = splitFact[1];
+                let finalSentence: string = ""
+                if(sentence2) {
+                    finalSentence = sentence1 + ". " + sentence2
+                    if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
+                } else {
+                    finalSentence = sentence1
+                    if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
+                }
 
-            if (!this.state.searching) {
-                this.setState({...this.state, searching: true})
-                fetch(search, {
-                    method: 'GET'
-                }).then(async (response: Response) => {
-                    const json: any = JSON.parse(await response.json())
-                    console.log(json);
-                }).catch((error) => {
-                    const errorFact: FactItem = {
-                        id: 1,
-                        text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
-                    }
-                    console.log(error)
-                    this.setState({...this.state, fact: errorFact})
-                })
-            }
+                const newFact: FactItem = {
+                    id: 1,
+                    text: finalSentence
+                }
+                this.setState({...this.state, fact: newFact})
+            }).catch((error) => {
+                const errorFact: FactItem = {
+                    id: 1,
+                    text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
+                }
+                console.log(error)
+                this.setState({...this.state, fact: errorFact})
+            })
         }
     }
 
@@ -68,14 +86,17 @@ class App extends Component <any, IState> {
                     <div id='factContainer'>
                         <div id='innerContainer'>
                             <div id='dogEar'/>
-                            <form id='factForm' onSubmit={(e) => {e.preventDefault(); this.searchFact(this.state.searchValue)}}>
-                                <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
-                                       autoFocus={false} autoComplete='off' id='factInput' type="text"
-                                       className={this.state.searching? 'hide form-control' : 'form-control'}
-                                       placeholder="Request a fact" />
-                                <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
-                            </form>
-                            <FactFactory fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
+                            <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
+                            <button id='factButton' onClick={() => this.searchFact()} className={this.state.searching? 'hide' : ''}>
+                                Smijt een feit!
+                            </button>
+                            {/*<form id='factForm' onSubmit={(e) => {e.preventDefault(); this.handleSearch(this.state.searchValue)}}>*/}
+                            {/*    <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}*/}
+                            {/*           autoFocus={false} autoComplete='off' id='factInput' type="textarea"*/}
+                            {/*           className={this.state.searching? 'hide form-control' : 'form-control'}*/}
+                            {/*           placeholder="Geef mij een feit over:" />*/}
+                            {/*    <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
+                            {/*</form>*/}
                         </div>
                     </div>
 
