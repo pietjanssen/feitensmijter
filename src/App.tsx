@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
-import Footer from "../src/components/Footer";
-import FactItem from "../src/models/FactItem";
-import Fact from "../src/components/Fact";
+import FactItem from "./models/FactItem";
+import Fact from "./components/Fact";
+import Footer from "./components/Footer";
 
 const apiUrl = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
 
