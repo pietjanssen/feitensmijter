@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Footer from "../src/components/Footer";
 import FactItem from "../src/models/FactItem";
-import Fact from "../src/components/Fact";
+import FactFactory from "../src/components/Fact";
 
 const apiUrl = (query: string) =>
     `https://en.wikipedia.org/w/api.php?action=query&prop=revisions&titles=${query}&rvslots=*&rvprop=content&format=json`
@@ -16,50 +16,69 @@ const errorFacts: string[] = [
 
 interface IState {
     fact?: FactItem
+    searchValue: string
+    searching: boolean
+    loading: boolean
 }
 
 
 class App extends Component <any, IState> {
     constructor(props: any) {
         super(props);
-        this.state = {}
+        this.state = {
+            searchValue: "",
+            searching: false,
+            loading: false
+        }
     }
 
-    searchFact(){
-        const currentComponent = this;
-        const searchTerm = "Boris"
-        const search: string = apiUrl(searchTerm)
+    handleInput(event: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({searchValue: event.target.value});
+    }
 
-        fetch(search, {
-            method: 'GET'
-        }).then(async (response: Response) => {
-            const json: any = JSON.parse(await response.json())
-            console.log(json);
-        }).catch((error) => {
-            const errorFact: FactItem = {
-                id: 1,
-                text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
+    stopSearching(){
+        this.setState({...this.state, searching: false, searchValue: ""})
+    }
+
+    searchFact(text: string){
+        if(text) {
+            const search: string = apiUrl(text)
+
+            if (!this.state.searching) {
+                this.setState({...this.state, searching: true, loading: true})
+                setTimeout(() => this.setState({...this.state, loading: false}), 3000)
+                fetch(search, {
+                    method: 'GET'
+                }).then(async (response: Response) => {
+                    const json: any = JSON.parse(await response.json())
+                    console.log(json);
+                }).catch((error) => {
+                    const errorFact: FactItem = {
+                        id: 1,
+                        text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
+                    }
+                    console.log(error)
+                    this.setState({...this.state, fact: errorFact})
+                })
             }
-            console.log(error)
-            currentComponent.setState({...this.state, fact: errorFact})
-        })
+        }
     }
 
     render() {
         return (
             <div>
                 <div id="main">
-                    <div id='fact-container'>
-                        <div id='inner-container'>
-                            <div id='dog-ear'/>
-                            <div className="input-group">
-                                <input autoFocus={true} id='fact-input' type="text" className="form-control"
-                                       placeholder="Request a fact" onMouseEnter={() => this.searchFact()}/>
-                                {/*<div className="input-group-append">*/}
-                                {/*    <button className="btn btn-outline-secondary" type="button">Button</button>*/}
-                                {/*</div>*/}
-                            </div>
-                            <Fact fact={this.state.fact}/>
+                    <div id='factContainer'>
+                        <div id='innerContainer'>
+                            <div id='dogEar'/>
+                            <form id='factForm' onSubmit={(e) => {e.preventDefault(); this.searchFact(this.state.searchValue)}}>
+                                <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
+                                       autoFocus={false} autoComplete='off' id='factInput' type="text"
+                                       className={this.state.searching? 'hide form-control' : 'form-control'}
+                                       placeholder="Request a fact" />
+                                <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
+                            </form>
+                            <FactFactory fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
                         </div>
                     </div>
 

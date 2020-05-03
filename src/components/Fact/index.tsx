@@ -4,13 +4,14 @@ import FactItem from "../../models/FactItem";
 
 interface IProps {
     fact?: FactItem
+    stopSearch: any
 }
 
 interface IState {
     timeout: any
 }
 
-class Fact extends Component <IProps, IState> {
+class FactFactory extends Component <IProps, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -27,6 +28,8 @@ class Fact extends Component <IProps, IState> {
             fact.innerHTML += text.charAt(i);
             i++;
             this.setState({...this.state, timeout: setTimeout(() => this.typeWriter(text, i), speed)});
+        } else {
+            this.props.stopSearch();
         }
     }
 
@@ -51,4 +54,4 @@ class Fact extends Component <IProps, IState> {
     }
 }
 
-export default Fact;
+export default FactFactory;

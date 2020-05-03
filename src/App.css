@@ -11,7 +11,7 @@
     height: 95vh;
 }
 
-#fact-container {
+#factContainer {
     width: 100%;
     position: relative;
     padding: 2rem;
@@ -21,14 +21,27 @@
     /*box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
 }
 
-#inner-container {
+#innerContainer {
     display: flex;
     justify-content: space-between;
     height: 50%;
     flex-direction: column;
 }
 
-#fact-input[type='text'] {
+@keyframes inputInsert {
+    from {
+        opacity: 1;
+        font-size: 48px;
+    }
+
+    to {
+        opacity: 0;
+        font-size: 0;
+        margin-top: 50px;
+    }
+}
+
+#factInput[type='text'] {
     text-align: center;
     font-size: 48px;
     background-color: transparent;
@@ -36,13 +49,21 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    transition: opacity 2s;
+    opacity: 1;
 }
 
-#fact-input[type='text']:focus {
+#factInput[type='text'].hide {
+    animation: inputInsert 0.5s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#factInput[type='text']:focus {
     outline: none;
 }
 
-#dog-ear {
+#dogEar {
     width: 0;
     height: 0;
     border-style: solid;
