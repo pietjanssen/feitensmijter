@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import "./fact.css"
+import "../Fact/fact.css"
 import FactItem from "../../models/FactItem";
 
 interface IProps {
