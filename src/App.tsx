@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './App.css';
 import FactItem from "./models/FactItem";
 import Fact from "./components/Fact";
-import Footer from "./components/Footer";
 
 const apiUrl = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
 
@@ -79,13 +78,18 @@ class App extends Component <any, IState> {
         }
     }
 
+    onDogEarClick(): void {
+        const win = window.open("https://github.com/pietjanssen/feitensmijter", '_blank');
+        if(win) win.focus();
+    }
+
     render() {
         return (
             <div>
-                <div id="main">
+                <div id="main" role='main'>
                     <div id='factContainer'>
                         <div id='innerContainer'>
-                            <div id='dogEar'/>
+                            <div id='dogEar' onClick={this.onDogEarClick}/>
                             <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
                             <button id='factButton' onClick={() => this.searchFact()} className={this.state.searching? 'hide' : ''}>
                                 Smijt een feit!
@@ -101,7 +105,9 @@ class App extends Component <any, IState> {
                     </div>
 
                 </div>
-                <Footer/>
+                <div id='footer'>
+                    made by <a href="https://www.linkedin.com/in/boris-van-norren-b14388129/">me</a>
+                </div>
             </div>
         );
     }
