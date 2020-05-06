@@ -31,7 +31,6 @@
 }
 
 #factButton {
-    font-size: 1rem;
     display: inline-block;
     padding: 15px 25px;
     cursor: pointer;
@@ -59,7 +58,6 @@
 
 #factInput {
     text-align: center;
-    font-size: 1rem;
     background-color: transparent;
     border: 0;
     -webkit-box-shadow: none;
@@ -85,7 +83,7 @@
 }
 
 hr {
-    width: 90vw;
+    width: 80vw;
     transition: opacity 1s;
 }
 
@@ -98,7 +96,6 @@ hr {
     margin: -2.5rem auto 1rem;
     display: table;
     padding: 0 1rem;
-    font-size: 2rem;
     z-index: 2;
     background-color: #eee;
 }
@@ -116,13 +113,16 @@ hr {
 
 /*Small devices (landscape phones, 576px and up)*/
 @media (min-width: 576px) {
-
+    #factContainer {
+        font-size: 1rem;
+    }
 }
 
 /*Medium devices (tablets, 768px and up)*/
 @media (min-width: 768px) {
     #factContainer {
         padding: 3rem 6rem 3rem 6rem;
+        font-size: 2rem;
     }
 }
 
