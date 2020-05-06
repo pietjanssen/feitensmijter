@@ -114,7 +114,7 @@ class App extends Component <any, IState> {
                             <hr className={this.state.searching? 'fade' : ''}/>
                             <form id='factForm' onSubmit={(e) => {e.preventDefault(); this.handleSearch(this.state.searchValue)}}>
                                 <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
-                                       autoFocus={true} autoComplete='off' id='factInput' type="textarea"
+                                       autoFocus={false} autoComplete='off' id='factInput' type="textarea"
                                        className={this.state.searching? 'fade' : ''}
                                        placeholder={this.state.inputPlaceholder} />
                                 <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
