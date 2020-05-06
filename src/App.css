@@ -9,6 +9,7 @@
     padding: 20px;
     width: 100vw;
     height: 95vh;
+    overflow: hidden;
 }
 
 #factContainer {
@@ -16,7 +17,6 @@
     position: relative;
     background: #eee;
     padding: 2rem 4rem 2rem 4rem;
-    overflow: hidden;
     /*-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
     /*-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
     /*box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
@@ -31,8 +31,7 @@
 }
 
 #factButton {
-    margin-top: 5%;
-    font-size: 24px;
+    font-size: 1rem;
     display: inline-block;
     padding: 15px 25px;
     cursor: pointer;
@@ -60,7 +59,7 @@
 
 #factInput {
     text-align: center;
-    font-size: 24px;
+    font-size: 1rem;
     background-color: transparent;
     border: 0;
     -webkit-box-shadow: none;
