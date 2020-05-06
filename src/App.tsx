@@ -3,7 +3,8 @@ import './App.css';
 import FactItem from "./models/FactItem";
 import Fact from "./components/Fact";
 
-const apiUrl = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
+const randomApiUrl: string = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
+const apiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/summary/${query}`
 
 const errorFacts: string[] = [
     "Ik heb geen idee wat dit zou moeten betekenen.",
@@ -12,10 +13,15 @@ const errorFacts: string[] = [
     "Error: 404 Not found."
 ]
 
+const jokes: string[] = [
+    "Kaylee is van oorsprong een Ierse of Engelse voornaam. Over het algemeen wordt de naam uitgesproken als Kay-Lee."
+]
+
 interface IState {
     fact?: FactItem
     searchValue: string
     searching: boolean
+    inputPlaceholder: string
 }
 
 
@@ -25,25 +31,36 @@ class App extends Component <any, IState> {
         this.state = {
             searchValue: "",
             searching: false,
+            inputPlaceholder: "Smijt mij een feit over:"
         }
     }
 
-    // handleInput(event: React.ChangeEvent<HTMLInputElement>) {
-    //     this.setState({searchValue: event.target.value});
-    // }
-    //
-    // handleSearch(text: string){
-    //     if(text){
-    //         this.searchFact("www.google.nl")
-    //     }
-    // }
+    handleInput(event: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({searchValue: event.target.value});
+    }
+
+    handleSearch(text: string){
+        if(text){
+            if (text.toLowerCase() === 'kaylee'){
+                if (!this.state.searching) {
+                    this.setState({...this.state, searching: true})
+                    const newFact: FactItem = {
+                        id: 1,
+                        text: jokes[0]
+                    }
+                    this.setState({...this.state, fact: newFact})
+                }
+            } else {
+                this.searchFact(apiUrl(text))
+            }
+        }
+    }
 
     stopSearching(){
-        // document.getElementById('factInput').placeholder = "Smijt er nog eentje!"
         this.setState({...this.state, searching: false, searchValue: ""})
     }
 
-    searchFact(url: string = apiUrl){
+    searchFact(url: string){
         if (!this.state.searching) {
             this.setState({...this.state, searching: true})
             fetch(url, {
@@ -53,27 +70,30 @@ class App extends Component <any, IState> {
                 const splitFact: string[] = json.extract.split(". ")
                 const sentence1: string = splitFact[0];
                 const sentence2: string = splitFact[1];
+                const sentence3: string = splitFact[2];
                 let finalSentence: string
-                if(sentence2) {
+                if(sentence3 && (sentence1 + sentence2 + sentence3).length < 40) {
+                    finalSentence = sentence1 + ". " + sentence2 + ". " + sentence3
+                }
+                else if(sentence2) {
                     finalSentence = sentence1 + ". " + sentence2
-                    if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
                 } else {
                     finalSentence = sentence1
-                    if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
                 }
+                if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
 
                 const newFact: FactItem = {
                     id: 1,
                     text: finalSentence
                 }
-                this.setState({...this.state, fact: newFact})
+                this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
             }).catch((error) => {
                 const errorFact: FactItem = {
                     id: 1,
                     text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
                 }
                 console.log(error)
-                this.setState({...this.state, fact: errorFact})
+                this.setState({...this.state, fact: errorFact, inputPlaceholder: "Smijt er nog één:"})
             })
         }
     }
@@ -91,16 +111,19 @@ class App extends Component <any, IState> {
                         <div id='innerContainer'>
                             <div id='dogEar' onClick={this.onDogEarClick}/>
                             <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
-                            <button id='factButton' onClick={() => this.searchFact()} className={this.state.searching? 'hide' : ''}>
+                            <hr className={this.state.searching? 'fade' : ''}/>
+                            <form id='factForm' onSubmit={(e) => {e.preventDefault(); this.handleSearch(this.state.searchValue)}}>
+                                <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
+                                       autoFocus={true} autoComplete='off' id='factInput' type="textarea"
+                                       className={this.state.searching? 'fade form-control' : 'form-control'}
+                                       placeholder={this.state.inputPlaceholder} />
+                                <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
+                            </form>
+                            <hr className={this.state.searching? 'fade' : ''}/>
+                            <p id='dividerTitle' className={this.state.searching? 'fade' : ''}>Of</p>
+                            <button id='factButton' onClick={() => this.searchFact(randomApiUrl)} className={this.state.searching? 'fade' : ''}>
                                 Smijt een feit!
                             </button>
-                            {/*<form id='factForm' onSubmit={(e) => {e.preventDefault(); this.handleSearch(this.state.searchValue)}}>*/}
-                            {/*    <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}*/}
-                            {/*           autoFocus={false} autoComplete='off' id='factInput' type="textarea"*/}
-                            {/*           className={this.state.searching? 'hide form-control' : 'form-control'}*/}
-                            {/*           placeholder="Geef mij een feit over:" />*/}
-                            {/*    <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
-                            {/*</form>*/}
                         </div>
                     </div>
 

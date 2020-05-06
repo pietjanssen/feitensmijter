@@ -58,24 +58,6 @@
     transform: translateY(4px);
 }
 
-#factButton.hide {
-    opacity: 0;
-    pointer-events: none;
-}
-
-@keyframes inputInsert {
-    from {
-        opacity: 1;
-        font-size: 48px;
-    }
-
-    to {
-        opacity: 0;
-        font-size: 0;
-        padding-top: 50px;
-    }
-}
-
 #factInput {
     text-align: center;
     font-size: 24px;
@@ -84,14 +66,7 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    transition: opacity 2s;
-    opacity: 1;
-}
-
-#factInput.hide {
-    animation: inputInsert 1s;
-    opacity: 0;
-    pointer-events: none;
+    transition: opacity 1s;
 }
 
 #factInput:focus {
@@ -108,6 +83,25 @@
     right: 0;
     top: 0;
     cursor: pointer;
+}
+
+hr {
+    width: 90vw;
+    transition: opacity 1s;
+}
+
+.fade {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#dividerTitle {
+    margin: -2.5rem auto 1rem;
+    display: table;
+    padding: 0 1rem;
+    font-size: 2rem;
+    z-index: 2;
+    background-color: #eee;
 }
 
 #footer {
