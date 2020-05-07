@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import './App.css';
 import FactItem from "./models/FactItem";
 import Fact from "./components/Fact";
+import WikiResponse from "./models/WikiResponse";
 
 const randomApiUrl: string = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
-const apiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/summary/${query}`
+const exactApiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/summary/${query}`
+const relatedApiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/related/${query}`
 
 const errorFacts: string[] = [
     "Ik heb geen idee wat dit zou moeten betekenen.",
@@ -39,9 +41,9 @@ class App extends Component <any, IState> {
         this.setState({searchValue: event.target.value});
     }
 
-    handleSearch(text: string){
-        if(text){
-            if (text.toLowerCase() === 'kaylee'){
+    handleSearch(text: string) {
+        if (text) {
+            if (text.toLowerCase() === 'kaylee') {
                 if (!this.state.searching) {
                     this.setState({...this.state, searching: true})
                     const newFact: FactItem = {
@@ -51,56 +53,84 @@ class App extends Component <any, IState> {
                     this.setState({...this.state, fact: newFact})
                 }
             } else {
-                this.searchFact(apiUrl(text))
+                this.searchFact(text.toLowerCase());
             }
         }
     }
 
-    stopSearching(){
+    stopSearching() {
         this.setState({...this.state, searching: false, searchValue: ""})
     }
 
-    searchFact(url: string){
+    async getRandomFact() {
         if (!this.state.searching) {
             this.setState({...this.state, searching: true})
-            fetch(url, {
-                method: 'GET'
-            }).then(async (response: Response) => {
-                const json: any = await response.json()
-                const splitFact: string[] = json.extract.split(". ")
-                const sentence1: string = splitFact[0];
-                const sentence2: string = splitFact[1];
-                const sentence3: string = splitFact[2];
-                let finalSentence: string
-                if(sentence3 && (sentence1 + sentence2 + sentence3).length < 40) {
-                    finalSentence = sentence1 + ". " + sentence2 + ". " + sentence3
-                }
-                else if(sentence2) {
-                    finalSentence = sentence1 + ". " + sentence2
-                } else {
-                    finalSentence = sentence1
-                }
-                if(finalSentence.charAt(finalSentence.length -1 ) !== ".") finalSentence = finalSentence + "."
-
-                const newFact: FactItem = {
-                    id: 1,
-                    text: finalSentence
-                }
+            const response: any = await fetch(randomApiUrl, {method: 'GET'})
+            if (response.ok) {
+                const wiki: WikiResponse = await response.json();
+                const newFact: FactItem = await this.createFact(wiki);
                 this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
-            }).catch((error) => {
+            } else {
                 const errorFact: FactItem = {
                     id: 1,
                     text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
                 }
-                console.log(error)
                 this.setState({...this.state, fact: errorFact, inputPlaceholder: "Smijt er nog één:"})
-            })
+            }
         }
+    }
+
+    async searchFact(search: string): Promise<void> {
+        if (!this.state.searching) {
+            this.setState({...this.state, searching: true})
+            let newFact: FactItem;
+            // Try to get a list of related wiki pages by search term.
+            const response: any = await fetch(relatedApiUrl(search), {method: "GET"});
+            if (response.ok) {
+                const json: { pages: WikiResponse[] } = await response.json()
+                const wiki: WikiResponse = json.pages[Math.floor(Math.random() * json.pages.length)];
+                newFact = await this.createFact(wiki);
+            } else {
+                // Try to get the exact wiki page by search term.
+                const response: any = await fetch(exactApiUrl(search), {method: "GET"});
+                if (response.ok) {
+                    const wiki: WikiResponse = await response.json();
+                    newFact = await this.createFact(wiki);
+                } else {
+                    // Generate an error Fact
+                    newFact = {
+                        id: 1,
+                        text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
+                    }
+                }
+            }
+            this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
+        }
+    }
+
+    async createFact(wiki: WikiResponse): Promise<FactItem> {
+        const splitFact: string[] = wiki.extract.split(". ")
+        const sentence1: string = splitFact[0];
+        const sentence2: string = splitFact[1];
+        const sentence3: string = splitFact[2];
+        let finalSentence: string
+        if (sentence3 && (sentence1 + sentence2 + sentence3).length < 40) {
+            finalSentence = sentence1 + ". " + sentence2 + ". " + sentence3
+        } else if (sentence2) {
+            finalSentence = sentence1 + ". " + sentence2
+        } else {
+            finalSentence = sentence1
+        }
+        if (finalSentence.charAt(finalSentence.length - 1) !== ".") finalSentence = finalSentence + "."
+        return {
+            id: wiki.pageid,
+            text: finalSentence
+        };
     }
 
     onDogEarClick(): void {
         const win = window.open("https://github.com/pietjanssen/feitensmijter", '_blank');
-        if(win) win.focus();
+        if (win) win.focus();
     }
 
     render() {
@@ -111,22 +141,25 @@ class App extends Component <any, IState> {
                         <div id='innerContainer'>
                             <div id='dogEar' onClick={this.onDogEarClick}/>
                             <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
-                            <hr className={this.state.searching? 'fade' : ''}/>
-                            <form id='factForm' onSubmit={(e) => {e.preventDefault(); this.handleSearch(this.state.searchValue)}}>
+                            <hr className={this.state.searching ? 'fade' : ''}/>
+                            <form id='factForm' onSubmit={(e) => {
+                                e.preventDefault();
+                                this.handleSearch(this.state.searchValue)
+                            }}>
                                 <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
                                        autoFocus={false} autoComplete='off' id='factInput' type="textarea"
-                                       className={this.state.searching? 'fade' : ''}
-                                       placeholder={this.state.inputPlaceholder} />
+                                       className={this.state.searching ? 'fade' : ''}
+                                       placeholder={this.state.inputPlaceholder}/>
                                 <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
                             </form>
-                            <hr className={this.state.searching? 'fade' : ''}/>
-                            <p id='dividerTitle' className={this.state.searching? 'fade' : ''}>Of</p>
-                            <button id='factButton' onClick={() => this.searchFact(randomApiUrl)} className={this.state.searching? 'fade' : ''}>
+                            <hr className={this.state.searching ? 'fade' : ''}/>
+                            <p id='dividerTitle' className={this.state.searching ? 'fade' : ''}>Of</p>
+                            <button id='factButton' onClick={() => this.getRandomFact()}
+                                    className={this.state.searching ? 'fade' : ''}>
                                 Smijt een feit!
                             </button>
                         </div>
                     </div>
-
                 </div>
                 <div id='footer'>
                     made by <a href="https://www.linkedin.com/in/boris-van-norren-b14388129/">me</a>

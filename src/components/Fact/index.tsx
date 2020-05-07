@@ -21,7 +21,7 @@ class Fact extends Component <IProps, IState> {
 
 
     typeWriter(text: string, i: number=0): void {
-        const speed: number = Math.floor(Math.random() * 100);
+        const speed: number = Math.floor(Math.random() * 50);
         const fact: HTMLElement | null = document.getElementById('fact');
 
         if (fact && i < text.length) {
