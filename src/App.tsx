@@ -24,6 +24,8 @@ interface IState {
     searchValue: string
     searching: boolean
     inputPlaceholder: string
+    likeButtonActive: boolean
+    disLikeButtonActive: boolean
 }
 
 
@@ -33,7 +35,9 @@ class App extends Component <any, IState> {
         this.state = {
             searchValue: "",
             searching: false,
-            inputPlaceholder: "Smijt mij een feit over:"
+            inputPlaceholder: "Smijt mij een feit over:",
+            likeButtonActive: false,
+            disLikeButtonActive: false
         }
     }
 
@@ -68,21 +72,22 @@ class App extends Component <any, IState> {
         if (!this.state.searching) {
             this.setState({...this.state, searching: true})
             const response: any = await fetch(randomApiUrl, {method: 'GET'})
+            let newFact: FactItem;
             if (response.ok) {
                 const wiki: WikiResponse = await response.json();
-                const newFact: FactItem = await createFact(wiki);
-                this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
+                newFact = await createFact(wiki);
             } else {
-                const errorFact: FactItem = {
+                newFact = {
                     id: 1,
                     text: errorFacts[Math.floor(Math.random() * errorFacts.length)]
                 }
-                this.setState({...this.state, fact: errorFact, inputPlaceholder: "Smijt er nog één:"})
             }
+            this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:", likeButtonActive: false, disLikeButtonActive: false})
         }
     }
 
     async searchFact(search: string): Promise<void> {
+        // TODO: Skip "Wikimedia-lijst"
         if (!this.state.searching) {
             this.setState({...this.state, searching: true})
             let newFact: FactItem;
@@ -106,42 +111,60 @@ class App extends Component <any, IState> {
                     }
                 }
             }
-            this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
+            this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:", likeButtonActive: false, disLikeButtonActive: false})
         }
     }
 
-    onDogEarClick(): void {
+    onRepoClick(): void {
         const win = window.open("https://github.com/pietjanssen/feitensmijter", '_blank');
         if (win) win.focus();
     }
 
+    onUpvote(): void {
+        this.setState(prevState => ({likeButtonActive: !prevState.likeButtonActive, disLikeButtonActive: false}))
+    }
+
+    onDownVote(): void {
+        this.setState(prevState => ({disLikeButtonActive: !prevState.disLikeButtonActive, likeButtonActive: false}))
+    }
+
     render() {
         return (
-            <div>
-                <div id="main" role='main'>
-                    <div id='pageContainer'>
-                        <div id='innerContainer'>
-                            <div id='dogEar' onClick={this.onDogEarClick}/>
-                            <Fact fact={this.state.fact} searching={this.state.searching} stopSearch={this.stopSearching.bind(this)}/>
-                            <form id='factForm' onSubmit={(e) => {
-                                e.preventDefault();
-                                this.handleSearch(this.state.searchValue)
-                            }}>
-                                {/*<input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}*/}
-                                {/*       autoFocus={true} autoComplete='off' id='factInput' type="textarea"*/}
-                                {/*       className={this.state.searching ? 'fade' : ''}*/}
-                                {/*       placeholder={this.state.inputPlaceholder}/>*/}
-                                {/*<input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
-                                <button id='factButton' type='submit'
+            <div id="main" role='main'>
+                <div id='pageContainer'>
+                    <div id='innerContainer'>
+                        <div id='brandContainer'/>
+                        <Fact fact={this.state.fact} searching={this.state.searching}
+                              stopSearch={this.stopSearching.bind(this)}/>
+                        <form id='factForm' onSubmit={(e) => {
+                            e.preventDefault();
+                            this.handleSearch(this.state.searchValue)
+                        }}>
+                            {/*<input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}*/}
+                            {/*       autoFocus={true} autoComplete='off' id='factInput' type="textarea"*/}
+                            {/*       className={this.state.searching ? 'fade' : ''}*/}
+                            {/*       placeholder={this.state.inputPlaceholder}/>*/}
+                            {/*<input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
+                            <div className={"btn-group"}>
+                                <button id='factButton'
                                         className={this.state.searching ? 'fade btn btn-lg' : 'btn btn-lg'}>
                                     Smijt een feit!
                                 </button>
-                            </form>
-                        </div>
+                                <div style={this.state.fact ? {marginLeft: 5, opacity: 1} : {marginLeft: 5, opacity: 0}} className="btn-group-vertical btn-group-sm" role="group" >
+                                    <button type={"button"} style={this.state.likeButtonActive ? {backgroundColor: "skyblue"} : undefined}
+                                            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}
+                                            onClick={() => this.onUpvote()}>
+                                        &#8593;
+                                    </button>
+                                    <button type={"button"} style={this.state.disLikeButtonActive ? {backgroundColor: "indianred"} : undefined}
+                                            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}
+                                            onClick={() => this.onDownVote()}>
+                                        &#8595;
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </div>
-                <div id='footer'>
-                    made by <a href="https://www.linkedin.com/in/boris-van-norren-b14388129/">me</a>
                 </div>
             </div>
         );
@@ -168,7 +191,6 @@ function createFact(wiki: WikiResponse): FactItem {
         text: finalSentence,
         imgSrc: wiki.thumbnail?.source,
         imgOriginalSrc: wiki.originalimage?.source
-
     };
 }
 
