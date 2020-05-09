@@ -55,6 +55,8 @@ class App extends Component <any, IState> {
             } else {
                 this.searchFact(text.toLowerCase());
             }
+        } else {
+            this.getRandomFact()
         }
     }
 
@@ -68,7 +70,7 @@ class App extends Component <any, IState> {
             const response: any = await fetch(randomApiUrl, {method: 'GET'})
             if (response.ok) {
                 const wiki: WikiResponse = await response.json();
-                const newFact: FactItem = await this.createFact(wiki);
+                const newFact: FactItem = await createFact(wiki);
                 this.setState({...this.state, fact: newFact, inputPlaceholder: "Smijt er nog één:"})
             } else {
                 const errorFact: FactItem = {
@@ -89,13 +91,13 @@ class App extends Component <any, IState> {
             if (response.ok) {
                 const json: { pages: WikiResponse[] } = await response.json()
                 const wiki: WikiResponse = json.pages[Math.floor(Math.random() * json.pages.length)];
-                newFact = await this.createFact(wiki);
+                newFact = await createFact(wiki);
             } else {
                 // Try to get the exact wiki page by search term.
                 const response: any = await fetch(exactApiUrl(search), {method: "GET"});
                 if (response.ok) {
                     const wiki: WikiResponse = await response.json();
-                    newFact = await this.createFact(wiki);
+                    newFact = await createFact(wiki);
                 } else {
                     // Generate an error Fact
                     newFact = {
@@ -108,26 +110,6 @@ class App extends Component <any, IState> {
         }
     }
 
-    async createFact(wiki: WikiResponse): Promise<FactItem> {
-        const splitFact: string[] = wiki.extract.split(". ")
-        const sentence1: string = splitFact[0];
-        const sentence2: string = splitFact[1];
-        const sentence3: string = splitFact[2];
-        let finalSentence: string
-        if (sentence3 && (sentence1 + sentence2 + sentence3).length < 40) {
-            finalSentence = sentence1 + ". " + sentence2 + ". " + sentence3
-        } else if (sentence2) {
-            finalSentence = sentence1 + ". " + sentence2
-        } else {
-            finalSentence = sentence1
-        }
-        if (finalSentence.charAt(finalSentence.length - 1) !== ".") finalSentence = finalSentence + "."
-        return {
-            id: wiki.pageid,
-            text: finalSentence
-        };
-    }
-
     onDogEarClick(): void {
         const win = window.open("https://github.com/pietjanssen/feitensmijter", '_blank');
         if (win) win.focus();
@@ -137,27 +119,23 @@ class App extends Component <any, IState> {
         return (
             <div>
                 <div id="main" role='main'>
-                    <div id='factContainer'>
+                    <div id='pageContainer'>
                         <div id='innerContainer'>
                             <div id='dogEar' onClick={this.onDogEarClick}/>
                             <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
-                            <hr className={this.state.searching ? 'fade' : ''}/>
                             <form id='factForm' onSubmit={(e) => {
                                 e.preventDefault();
                                 this.handleSearch(this.state.searchValue)
                             }}>
-                                <input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}
-                                       autoFocus={false} autoComplete='off' id='factInput' type="textarea"
-                                       className={this.state.searching ? 'fade' : ''}
-                                       placeholder={this.state.inputPlaceholder}/>
-                                <input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>
+                                {/*<input value={this.state.searchValue} onChange={(e) => this.handleInput(e)}*/}
+                                {/*       autoFocus={true} autoComplete='off' id='factInput' type="textarea"*/}
+                                {/*       className={this.state.searching ? 'fade' : ''}*/}
+                                {/*       placeholder={this.state.inputPlaceholder}/>*/}
+                                {/*<input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
+                                <button id='factButton' type='submit' className={this.state.searching ? 'fade btn btn-lg' : 'btn btn-lg'}>
+                                    Smijt een feit!
+                                </button>
                             </form>
-                            <hr className={this.state.searching ? 'fade' : ''}/>
-                            <p id='dividerTitle' className={this.state.searching ? 'fade' : ''}>Of</p>
-                            <button id='factButton' onClick={() => this.getRandomFact()}
-                                    className={this.state.searching ? 'fade' : ''}>
-                                Smijt een feit!
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -167,6 +145,29 @@ class App extends Component <any, IState> {
             </div>
         );
     }
+}
+
+function createFact(wiki: WikiResponse): FactItem {
+    console.log(wiki)
+    const splitFact: string[] = wiki.extract.split(". ")
+    const sentence1: string = splitFact[0];
+    const sentence2: string = splitFact[1];
+    const sentence3: string = splitFact[2];
+    let finalSentence: string
+    if (sentence3 && (sentence1 + sentence2 + sentence3).length < 40) {
+        finalSentence = sentence1 + ". " + sentence2 + ". " + sentence3
+    } else if (sentence2) {
+        finalSentence = sentence1 + ". " + sentence2
+    } else {
+        finalSentence = sentence1
+    }
+    if (finalSentence.charAt(finalSentence.length - 1) !== ".") finalSentence = finalSentence + "."
+    return {
+        id: wiki.pageid,
+        text: finalSentence,
+        imgSrc: wiki.originalimage?.source
+
+    };
 }
 
 export default App;

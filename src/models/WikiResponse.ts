@@ -10,7 +10,7 @@ export default interface WikiResponse{
     extract_html: string
     lang?: string
     namepace: {id: number, text: string}
-    originalimage: {height: number, source: string, width: number}
+    originalimage?: {height: number, source: string, width: number}
     pageid: number
     revision: string
     thumbnail: {height: number, source: string, width: number}

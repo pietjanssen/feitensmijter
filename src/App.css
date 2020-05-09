@@ -12,14 +12,11 @@
     overflow: hidden;
 }
 
-#factContainer {
+#pageContainer {
     width: 100%;
     position: relative;
     background: #eee;
     padding: 2rem 4rem 2rem 4rem;
-    /*-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
-    /*-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
-    /*box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);*/
 }
 
 #innerContainer {
@@ -31,12 +28,7 @@
 }
 
 #factButton {
-    display: inline-block;
     padding: 15px 25px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
     color: #fff;
     background-color: #4CAF50;
     border: none;
@@ -113,29 +105,29 @@ hr {
 
 /*Small devices (landscape phones, 576px and up)*/
 @media (min-width: 576px) {
-    #factContainer {
+    #pageContainer {
         font-size: 1rem;
     }
 }
 
 /*Medium devices (tablets, 768px and up)*/
 @media (min-width: 768px) {
-    #factContainer {
-        padding: 3rem 6rem 3rem 6rem;
+    #pageContainer {
+        padding: 4rem 4rem;
         font-size: 2rem;
     }
 }
 
 /*Large devices (desktops, 992px and up)*/
 @media (min-width: 992px) {
-    #factContainer {
-        padding: 7rem 14rem 7rem 14rem;
+    #pageContainer {
+        padding: 8rem 8rem;
     }
 }
 
 /*Extra large devices (large desktops, 1200px and up)*/
 @media (min-width: 1200px) {
-    #factContainer {
-        padding: 12rem 20rem 12rem 20rem;
+    #pageContainer {
+        padding: 15rem 15rem;
     }
 }
