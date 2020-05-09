@@ -122,7 +122,7 @@ class App extends Component <any, IState> {
                     <div id='pageContainer'>
                         <div id='innerContainer'>
                             <div id='dogEar' onClick={this.onDogEarClick}/>
-                            <Fact fact={this.state.fact} stopSearch={this.stopSearching.bind(this)}/>
+                            <Fact fact={this.state.fact} searching={this.state.searching} stopSearch={this.stopSearching.bind(this)}/>
                             <form id='factForm' onSubmit={(e) => {
                                 e.preventDefault();
                                 this.handleSearch(this.state.searchValue)
@@ -132,7 +132,8 @@ class App extends Component <any, IState> {
                                 {/*       className={this.state.searching ? 'fade' : ''}*/}
                                 {/*       placeholder={this.state.inputPlaceholder}/>*/}
                                 {/*<input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
-                                <button id='factButton' type='submit' className={this.state.searching ? 'fade btn btn-lg' : 'btn btn-lg'}>
+                                <button id='factButton' type='submit'
+                                        className={this.state.searching ? 'fade btn btn-lg' : 'btn btn-lg'}>
                                     Smijt een feit!
                                 </button>
                             </form>
@@ -165,7 +166,8 @@ function createFact(wiki: WikiResponse): FactItem {
     return {
         id: wiki.pageid,
         text: finalSentence,
-        imgSrc: wiki.originalimage?.source
+        imgSrc: wiki.thumbnail?.source,
+        imgOriginalSrc: wiki.originalimage?.source
 
     };
 }

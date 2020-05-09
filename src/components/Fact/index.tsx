@@ -4,12 +4,12 @@ import FactItem from "../../models/FactItem";
 
 interface IProps {
     fact?: FactItem
+    searching: boolean
     stopSearch: any
 }
 
 interface IState {
     timeout: any
-    searching: boolean
 }
 
 class Fact extends Component <IProps, IState> {
@@ -17,7 +17,6 @@ class Fact extends Component <IProps, IState> {
         super(props);
         this.state = {
             timeout: null,
-            searching: true
         }
     }
 
@@ -30,14 +29,12 @@ class Fact extends Component <IProps, IState> {
             i++;
             this.setState({...this.state, timeout: setTimeout(() => this.typeWriter(text, i), speed)});
         } else {
-            this.setState({searching: false})
             this.props.stopSearch();
         }
     }
 
     componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<any>, snapshot?: any) {
         if(this.props.fact && this.props.fact !== prevProps.fact) {
-            this.setState({searching: true})
             const fact: HTMLElement | null = document.getElementById('fact');
             if(fact) {
                 fact.innerHTML = '';
@@ -53,9 +50,9 @@ class Fact extends Component <IProps, IState> {
     render() {
         return (
             <React.Fragment>
-                {this.props.fact?.imgSrc ?
-                    <a href={this.props.fact.imgSrc}>
-                        <img id='factImage' src={this.props.fact.imgSrc} alt='Fact' className={this.state.searching? 'fade' : ''}/>
+                {this.props.fact?.imgSrc && window.innerWidth > 1000 ?
+                    <a href={this.props.fact.imgOriginalSrc}>
+                        <img id='factImage' src={this.props.fact.imgSrc} alt='Fact' className={this.props.searching? 'fade' : ''}/>
                     </a>
                     : null}
                 <div id='fact' className="fact"/>
