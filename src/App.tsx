@@ -3,6 +3,10 @@ import './App.css';
 import FactItem from "./models/FactItem";
 import Fact from "./components/Fact";
 import WikiResponse from "./models/WikiResponse";
+import { ReactComponent as Logo } from "./assets/images/feitensmijter_logo.svg";
+import smijt_button from "./assets/images/smijt-een-feit-button-geen-dropshadow.png";
+import dislike_button from "./assets/images/dislike_button.svg";
+import like_button from "./assets/images/like_button.svg";
 
 const randomApiUrl: string = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
 const exactApiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/summary/${query}`
@@ -132,8 +136,10 @@ class App extends Component <any, IState> {
         return (
             <div id="main" role='main'>
                 <div id='pageContainer'>
+                    <Logo title={'Feitensmijter logo'} id='brandLogo'/>
                     <div id='innerContainer'>
                         <div id='brandContainer'/>
+                        {/*<img src="/assets/images/Feitensmijter%20logo%20RGB.svg" alt={'Feitensmijter logo'}/>*/}
                         <Fact fact={this.state.fact} searching={this.state.searching}
                               stopSearch={this.stopSearching.bind(this)}/>
                         <form id='factForm' onSubmit={(e) => {
@@ -145,24 +151,21 @@ class App extends Component <any, IState> {
                             {/*       className={this.state.searching ? 'fade' : ''}*/}
                             {/*       placeholder={this.state.inputPlaceholder}/>*/}
                             {/*<input type="submit" style={{width: 0, height: 0}} tabIndex={-1}/>*/}
-                            <div className={"btn-group"}>
-                                <button id='factButton'
-                                        className={this.state.searching ? 'fade btn btn-lg' : 'btn btn-lg'}>
-                                    Smijt een feit!
-                                </button>
-                                <div style={this.state.fact ? {marginLeft: 5, opacity: 1} : {marginLeft: 5, opacity: 0}} className="btn-group-vertical btn-group-sm" role="group" >
-                                    <button type={"button"} style={this.state.likeButtonActive ? {backgroundColor: "skyblue"} : undefined}
-                                            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}
-                                            onClick={() => this.onUpvote()}>
-                                        &#8593;
-                                    </button>
-                                    <button type={"button"} style={this.state.disLikeButtonActive ? {backgroundColor: "indianred"} : undefined}
-                                            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}
-                                            onClick={() => this.onDownVote()}>
-                                        &#8595;
-                                    </button>
-                                </div>
-                            </div>
+                            <input type='image' alt='Smijt-een-feit!' className={this.state.searching ? 'fade' : ''} src={smijt_button} id='factButton'/>
+                            {/*<div style={this.state.fact ? {marginLeft: 5, opacity: 1} : {marginLeft: 5, opacity: 0}} className="btn-group-vertical btn-group-sm" role="group" >*/}
+                            {/*    <button type={"button"} style={this.state.likeButtonActive ? {backgroundColor: "skyblue"} : undefined}*/}
+                            {/*            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}*/}
+                            {/*            onClick={() => this.onUpvote()}>*/}
+                            {/*        &#8593;*/}
+                            {/*    </button>*/}
+                            {/*    <button type={"button"} style={this.state.disLikeButtonActive ? {backgroundColor: "indianred"} : undefined}*/}
+                            {/*            className={this.state.searching ? 'fade btn btn-secondary btn-sm' : 'btn btn-secondary btn-sm'}*/}
+                            {/*            onClick={() => this.onDownVote()}>*/}
+                            {/*        &#8595;*/}
+                            {/*    </button>*/}
+                            {/*</div>*/}
+                            {/*<input type='image' onClick={() => this.onUpvote()} alt='Like-het-feit!' className={this.state.searching ? 'fade' : ''} src={like_button}/>*/}
+                            {/*<input type='image' onClick={() => this.onDownVote()} alt='Dislike-het-feit!' className={this.state.searching ? 'fade' : ''} src={dislike_button}/>*/}
                         </form>
                     </div>
                 </div>

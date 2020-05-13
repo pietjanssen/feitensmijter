@@ -16,6 +16,7 @@
     width: 100%;
     position: relative;
     padding: 2rem 4rem 2rem 4rem;
+    text-align: center;
 }
 
 #innerContainer {
@@ -36,24 +37,28 @@
     cursor: pointer;
 }
 
+#brandLogo {
+    width: 125px;
+    margin: -2rem auto 1rem;
+}
+
 #factButton {
-    padding: 15px 25px;
-    color: #fff;
-    background-color: #4CAF50;
+    width: 100%;
     border: none;
-    border-radius: 15px;
-    box-shadow: 0 9px #1d5f18;
+    /*border-radius: 15px;*/
+    -webkit-filter: drop-shadow(0 10px 0 #217d9d);
+    filter: drop-shadow(0 10px 0 #217d9d);
     transition: opacity 1s;
 }
 
 #factButton:hover {
-    background-color: #3e8e41
+    /*background-color: #3e8e41*/
 }
 
 
 #factButton:active {
-    background-color: #3e8e41;
-    box-shadow: 0 5px #1d5f18;
+    -webkit-filter: drop-shadow(0 6px 0 #217d9d);
+    filter: drop-shadow(0 6px 0 #217d9d);
     transform: translateY(4px);
 }
 
@@ -102,6 +107,12 @@ hr {
 
 /*Small devices (landscape phones, 576px and up)*/
 @media (min-width: 576px) {
+    #factButton {
+        width: 50%;
+    }
+    #brandLogo {
+        width: 125px;
+    }
     #pageContainer {
         font-size: 1rem;
     }
@@ -109,16 +120,22 @@ hr {
 
 /*Medium devices (tablets, 768px and up)*/
 @media (min-width: 768px) {
+    #brandLogo {
+        width: 25vw;
+    }
     #pageContainer {
-        padding: 4rem 4rem;
+        padding: 2rem 8rem;
         font-size: 2rem;
     }
 }
 
 /*Large devices (desktops, 992px and up)*/
 @media (min-width: 992px) {
+    #brandLogo {
+        width: 15vw;
+    }
     #pageContainer {
-        padding: 8rem 8rem;
+        padding: 4rem 8rem 12rem;
     }
 }
 
