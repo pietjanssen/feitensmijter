@@ -51,7 +51,7 @@ class Fact extends Component <IProps, IState> {
         return (
             <React.Fragment>
                 {this.props.fact?.imgSrc && window.innerWidth > 1000 ?
-                    <a href={this.props.fact.imgOriginalSrc} target='_blank'>
+                    <a href={this.props.fact.imgOriginalSrc} target='_blank' rel="noopener noreferrer">
                         <img id='factImage' src={this.props.fact.imgSrc} alt='Fact' className={this.props.searching? 'fade' : ''}/>
                     </a>
                     : null}
