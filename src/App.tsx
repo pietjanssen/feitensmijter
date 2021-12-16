@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import Homepage from "./views/homepage/homepage";
-import SignIn from "./components/SignIn/SignIn";
+import HomePage from "./views/HomePage/HomePage";
+import firebase from 'firebase/compat/app';
+import {firebaseApp} from "./config";
+import { UserContext } from './components/Context/UserContext';
 
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
 
 
 class App extends Component <any, any> {
@@ -11,18 +11,27 @@ class App extends Component <any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            firebaseApp: undefined
+            user: undefined
         }
     }
 
     componentDidMount() {
+        firebase.auth(firebaseApp).onAuthStateChanged((user) => {
+            if (user) {
+                console.log(user)
+                this.setState({user: user})
+            } else {
+                this.setState({user: undefined})
+            }
+        })
     }
 
     render() {
         return (
             <div id="main" role='main'>
-                {/*<Homepage/>*/}
-                <SignIn/>
+                <UserContext.Provider value={{user: this.state.user}}>
+                    <HomePage/>
+                </UserContext.Provider>
             </div>
         );
     }

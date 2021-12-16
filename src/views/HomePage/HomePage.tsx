@@ -6,6 +6,7 @@ import Fact from "../../components/Fact";
 import {errorFacts, jokes} from "./util";
 import '../../App.css';
 import WikiResponse from "../../models/WikiResponse";
+import Header from "../../components/Header/Header";
 
 const randomApiUrl: string = "https://nl.wikipedia.org/api/rest_v1/page/random/summary"
 const exactApiUrl = (query: string): string => `https://nl.wikipedia.org/api/rest_v1/page/summary/${query}`
@@ -21,7 +22,7 @@ interface IState {
 }
 
 
-class Homepage extends Component <any, IState> {
+class HomePage extends Component <any, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -36,6 +37,7 @@ class Homepage extends Component <any, IState> {
     render() {
         return (
             <div id='pageContainer'>
+                <Header/>
                 <Logo title={'Feitensmijter logo'} id='brandLogo'/>
                 <div id='innerContainer'>
                     <div id='brandContainer'/>
@@ -194,4 +196,4 @@ function createFact(wiki: WikiResponse): FactItem {
     };
 }
 
-export default Homepage;
+export default HomePage;
